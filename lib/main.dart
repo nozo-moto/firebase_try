@@ -41,9 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("ホーム"),
-      ),
       body: tabLayout[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
