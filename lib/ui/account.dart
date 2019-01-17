@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+enum DialogLogoutAction {
+  cancel,
+  agree,
+}
+
+
 class Account extends StatefulWidget {
   @override
   _AccountState createState() => new _AccountState();
@@ -16,16 +22,19 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Color(0xe0e0e0),
       appBar: AppBar(
         title: new Text("アカウント"),
       ),
-      body: _user == null ? _buildGoogleSignInButton() : _buildAccountInfoLogin(),
+      body: _user == null ? _buildGoogleSignInButton() : _buildAccountInfoLogin(context),
       // body: _buildAccountInfoLogin(),
     );
   }
 
-  Widget _buildAccountInfoLogin() {
+  Widget _buildAccountInfoLogin(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle dialogTextStyle = theme.textTheme.subhead.copyWith(color: theme.textTheme.caption.color);
+
     return SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -33,8 +42,7 @@ class _AccountState extends State<Account> {
               color: Colors.white,
               child: ListTile(
                 title: Text("note user profile"),
-                leading: CircleAvatar(
-                  ),
+                leading: CircleAvatar(),
                 trailing: Icon(Icons.navigate_next),
               ),
             ),
@@ -103,6 +111,37 @@ class _AccountState extends State<Account> {
               child: ListTile(
                 title: Text("ログアウト"),
                 trailing: Icon(Icons.navigate_next),
+                onTap: (){
+                  showLogoutDialog<DialogLogoutAction>(
+                    context: context,
+                    child: AlertDialog(
+                      content: Text(
+                        'ログアウトしますか',
+                        style: dialogTextStyle,
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: const Text("NO"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: const Text('YES'),
+                          onPressed: () {
+                            _googleSignIn.signOut().then((result) {
+                              setState(() {
+                                _user = null;
+                              });
+                              Navigator.of(context).pop();
+                            });
+                          },
+                        )
+                      ],
+                    )
+                  );
+                  
+                },
               ),
             ),
             SizedBox(height: 30.0,),
@@ -112,27 +151,73 @@ class _AccountState extends State<Account> {
   }
 
   Widget _buildGoogleSignInButton() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Center(
-          child: RaisedButton(
-            child: Text("Sing in"),
-            onPressed: () {
-              _handleSignIn()
-              .then((FirebaseUser user) {
-                setState(() {
-                  _user = user;
-                });
-              }).catchError((error) {
-                print(error);
-              });
-            },
+    return Center(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 50.0,),
+          Container(
+            width: 100.0,
+            height: 100.0,
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.person,
+              size: 60,
+              color: Colors.grey,
+            ),
           ),
-        )
-      ],
+          SizedBox(height: 50.0,),
+          Text("自分の記事や",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+          Text("スキした記事を",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+          Text("確認できます。",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+          SizedBox(height: 50.0,),
+          Container(
+            child: FlatButton(
+              child: Text("ログイン", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
+              color: Colors.teal,
+              onPressed: () {
+                _handleSignIn()
+                .then((FirebaseUser user) {
+                  setState(() {
+                    _user = user;
+                  });
+                }).catchError((error) {
+                  print(error);
+                });
+              },
+            ),
+            width: 300,
+            height: 60,
+          )
+        ],
+      )
     );
   }
+  
+  void showLogoutDialog<T>({ BuildContext context, Widget child }) {
+    showDialog<T>(
+      context: context,
+      builder: (BuildContext context) => child,
+    );
+  }
+
 
   Future<FirebaseUser> _handleSignIn() async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
