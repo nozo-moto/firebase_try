@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                CircleAvatar(backgroundImage: AssetImage("asset/hoge.png"),),
+                CircleAvatar(backgroundImage: AssetImage("assets/0.png"),),
                 SizedBox(width: 10.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

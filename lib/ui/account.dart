@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Account extends StatefulWidget {
   @override
@@ -7,6 +9,10 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+  FirebaseUser _user;
+  final GoogleSignIn _googleSignIn = new GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +20,13 @@ class _AccountState extends State<Account> {
       appBar: AppBar(
         title: new Text("アカウント"),
       ),
-      body: SingleChildScrollView(
+      body: _user == null ? _buildGoogleSignInButton() : _buildAccountInfoLogin(),
+      // body: _buildAccountInfoLogin(),
+    );
+  }
+
+  Widget _buildAccountInfoLogin() {
+    return SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Container(
@@ -96,7 +108,40 @@ class _AccountState extends State<Account> {
             SizedBox(height: 30.0,),
           ],
         ),
-      ),
+      );
+  }
+
+  Widget _buildGoogleSignInButton() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Center(
+          child: RaisedButton(
+            child: Text("Sing in"),
+            onPressed: () {
+              _handleSignIn()
+              .then((FirebaseUser user) {
+                setState(() {
+                  _user = user;
+                });
+              }).catchError((error) {
+                print(error);
+              });
+            },
+          ),
+        )
+      ],
     );
+  }
+
+  Future<FirebaseUser> _handleSignIn() async {
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    FirebaseUser user = await _auth.signInWithGoogle(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    print("signed in " + user.displayName);
+    return user;
   }
 }
