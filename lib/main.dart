@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:notelike_app/ui/account.dart';
 import 'package:notelike_app/ui/home.dart';
 import 'package:notelike_app/ui/create.dart';
@@ -73,6 +74,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _onTabBootomTab(int index) {
+    if (index == 2) {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => Create(), fullscreenDialog: true));
+        return;
+    }
+
     setState(() {
       currentIndex = index;
     });
