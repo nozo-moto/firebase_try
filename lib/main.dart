@@ -1,9 +1,11 @@
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,9 +16,34 @@ import 'package:notelike_app/ui/notification.dart';
 import 'package:notelike_app/ui/search.dart';
 
 
-void main() => runApp(MyApp());
+// void main() => runApp(MyApp());
+Future<void> main() async {
+//   final FirebaseApp app = await FirebaseApp.configure(
+//     name: 'https://notelikeapp.firebaseio.com/',
+//     options: Platform.isIOS
+//         ? const FirebaseOptions(
+//             googleAppID: '1:821805173960:ios:35ed1693e742ea27',
+//             gcmSenderID: '821805173960',
+//             databaseURL: 'https://notelikeapp.firebaseio.com/',
+//           )
+//         : const FirebaseOptions(
+//             googleAppID: '1:821805173960:ios:35ed1693e742ea27',
+//             apiKey: 'AIzaSyB5P_QtIiSnOjJ6utXLDw_brvnyoFj6PK8',
+//             databaseURL: 'https://notelikeapp.firebaseio.com/',
+//           ),
+//   );
+  runApp(MaterialApp(
+    title: 'Flutter Database Example',
+    // home: MyApp(app: app),
+    home: MyApp(),
+  ));
+}
 
 class MyApp extends StatelessWidget {
+  // final FirebaseApp app;
+  // MyApp({this.app});
+  MyApp();
+
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
@@ -29,7 +56,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: new MyHomePage(),
+      home: new MyHomePage(), 
     );
   }
 }
@@ -47,10 +74,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  _MyHomePageState(this.analytics, this.observer);
-
   final FirebaseAnalyticsObserver observer;
   final FirebaseAnalytics analytics;
+  _MyHomePageState(this.analytics, this.observer );
   String _message = '';
 
   int currentIndex = 0;

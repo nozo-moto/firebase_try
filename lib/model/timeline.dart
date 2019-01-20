@@ -1,13 +1,16 @@
-class TimeLine {
-  final String content;
-  final int suki_count;
-  final String thumbneil;
-  final String title;
-  final String usericon;
-  final String username;
-  final String created_at;
+import 'package:firebase_database/firebase_database.dart';
 
-  const TimeLine(
+class TimeLineModel {
+  String key;
+  String content;
+  int suki_count;
+  String thumbneil;
+  String title;
+  String usericon;
+  String username;
+  String created_at;
+
+  TimeLineModel(
     this.title,
     this.content,
     this.thumbneil,
@@ -16,6 +19,16 @@ class TimeLine {
     this.usericon,
     this.created_at,
   );
+
+  TimeLineModel.fromSnapShot(DataSnapshot snapshot):
+    key = snapshot.key,
+    title = snapshot.value['title'],
+    content = snapshot.value['content'],
+    suki_count = snapshot.value['suki_count'],
+    thumbneil = snapshot.value['thumbneil'],
+    usericon = snapshot.value['usericon'],
+    username = snapshot.value['username'],
+    created_at = snapshot.value['created_at'];
 
   toJson() {
     return {
@@ -28,4 +41,9 @@ class TimeLine {
       "created_at": created_at,
     };
   }
+  
+  @override
+    String toString() {
+      return 'title: ${this.title}, content: ${this.content}, thumbneil: ${this.thumbneil}, suki_count: ${this.suki_count}, username: ${this.username}, usericon: ${this.usericon}, create_at: ${this.created_at}';
+    }
 }
