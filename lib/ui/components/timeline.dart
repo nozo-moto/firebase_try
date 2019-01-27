@@ -26,6 +26,7 @@ class _TimeLineState extends State<TimeLine> {
 
   @override
   Widget build(BuildContext context) {
+    List<TimeLineModel> result = new List();
     _timelineSubscription = _timelineRef.onChildAdded.listen((Event event) {
       Map value = event.snapshot.value as Map;
       value.forEach((k, v) => (
@@ -41,14 +42,16 @@ class _TimeLineState extends State<TimeLine> {
           )
         )
       ));
+      // timelineData =
+      result = timelineData;
     }, onError: (Object o ) {
       final DatabaseError error = o;
       print('Error ${error.code}, ${error.message}');
     });
 
     return ListView(
-      children: List.generate(timelineData.length, (index) {
-        return _timelineCradView(timelineData[index]);
+      children: List.generate(result.length, (index) {
+        return _timelineCradView(result[index]);
       }),
     );
   }
